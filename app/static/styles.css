@@ -1,0 +1,19 @@
+form {
+    display: flex;
+    border: 1px solid grey;
+    border-radius: 1rem;
+    width: min-content;
+}
+
+.text-input {
+    border: none;
+    border-radius: 1rem 0 0 1rem;
+    padding: 1rem;
+    width: 20rem;
+}
+
+.submit {
+    border: none;
+    border-radius: 0 1rem 1rem 0;
+    cursor: pointer;
+}

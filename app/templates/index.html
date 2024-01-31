@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potter GPT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Potter GPT</h1>
+    <div>
+        <form action="/" method="post">
+            <input class="text-input" type="text" name="query" placeholder="Enter your search query" required>
+            <button type="submit" class="submit">Search</button>
+        </form>
+
+        <div id="generated-text">
+            <span id="animated-text">{{ generated_text }}</span>
+        </div>
+    </div>
+
+    <script>
+        function animateText() {
+            var inputText = document.getElementById("user_input").value;
+            var animatedText = document.getElementById("animated-text");
+            animatedText.innerHTML = "";
+
+            for (let i = 0; i < inputText.length; i++) {
+                setTimeout(function() {
+                    animatedText.innerHTML += inputText[i];
+                }, 100 * i);
+            }
+        }
+    </script>
+</body>
+</html>
