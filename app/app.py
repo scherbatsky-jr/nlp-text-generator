@@ -8,11 +8,10 @@ app = Flask(__name__)
 def index():
     generated_text = ""
 
+    # get the user input prompt
     if request.method == 'POST':
         try:
             data = request.get_json()
-
-            print(data)
 
             if data and 'prompt' in data:
                 user_input = data['prompt']
@@ -29,34 +28,41 @@ def index():
     return render_template('index.html')
 
 def process_user_input(user_input):
+    # Load the vocab and tokenizer exported from notebook
+    vocab = torch.load('models/vocab.pt')
+    tokenizer = torch.load('models/tokenizer.pt')
+
+    # select device for loading model
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     max_seq_len = 30
     seed = 0
     temperature = 1
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    vocab = torch.load('models/vocab.pt')
-    tokenizer = torch.load('models/tokenizer.pt')
     vocab_size = len(vocab)
+    
     emb_dim = 1024               
     hid_dim = 1024                
     num_layers = 2 
     dropout_rate = 0.65              
-    lr = 1e-3
 
+    # load the exported model
     model = LSTMLanguageModel(vocab_size, emb_dim, hid_dim, num_layers, dropout_rate).to(device)
     model.load_state_dict(torch.load('models/harrypotter.pt',  map_location=device))
 
-    generation = generate(user_input, max_seq_len, temperature, model, tokenizer, 
-                          vocab, device, seed)
+    generation = generate(user_input, max_seq_len, temperature, model, tokenizer, vocab, device, seed)
+
     return ' '.join(generation)
 
 def generate(prompt, max_seq_len, temperature, model, tokenizer, vocab, device, seed=None):
     if seed is not None:
         torch.manual_seed(seed)
+    
     model.eval()
     tokens = tokenizer(prompt)
     indices = [vocab[t] for t in tokens]
     batch_size = 1
     hidden = model.init_hidden(batch_size, device)
+    
     with torch.no_grad():
         for i in range(max_seq_len):
             src = torch.LongTensor([indices]).to(device)
@@ -79,4 +85,4 @@ def generate(prompt, max_seq_len, temperature, model, tokenizer, vocab, device, 
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
