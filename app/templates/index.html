@@ -39,10 +39,10 @@
             event.preventDefault();
 
             var inputText = document.getElementById("prompt-input").value;
-            console.log(inputText)
             var animatedText = document.getElementById("animated-text");
             animatedText.innerHTML = "Processing...";
 
+            // Sending the post request to flask app
             try {
                 const response = await fetch('/', {
                     method: 'POST',
@@ -58,7 +58,9 @@
 
                 const result = await response.json();
 
+                // Animate the generated text 
                 animatedText.innerHTML = "";
+                
                 for (let i = 0; i < result.generated_text.length; i++) {
                     setTimeout(function () {
                         animatedText.innerHTML += result.generated_text[i];
