@@ -7,28 +7,66 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Potter GPT</h1>
-    <div>
-        <form action="/" method="post">
-            <input class="text-input" type="text" name="query" placeholder="Enter your search query" required>
-            <button type="submit" class="submit">Search</button>
+    <div class="content">
+        <h1>Potter GPT</h1>
+        <form>
+            <input
+                class="text-input"
+                type="text"
+                id="prompt-input"
+                name="prompt-input"
+                placeholder="Enter your prompt"
+                required
+            >
+            <button type="submit" class="submit">GO</button>
         </form>
 
-        <div id="generated-text">
+        <div id="generated-text" class="generated-text">
             <span id="animated-text">{{ generated_text }}</span>
         </div>
     </div>
 
     <script>
-        function animateText() {
-            var inputText = document.getElementById("user_input").value;
-            var animatedText = document.getElementById("animated-text");
-            animatedText.innerHTML = "";
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButton = document.querySelector('.submit');
+            
+            submitButton.addEventListener('click', function (event) {
+                animateText(event);
+            });
+        });
+    
+        async function animateText(event) {
+            event.preventDefault();
 
-            for (let i = 0; i < inputText.length; i++) {
-                setTimeout(function() {
-                    animatedText.innerHTML += inputText[i];
-                }, 100 * i);
+            var inputText = document.getElementById("prompt-input").value;
+            console.log(inputText)
+            var animatedText = document.getElementById("animated-text");
+            animatedText.innerHTML = "Processing...";
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: inputText }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+
+                animatedText.innerHTML = "";
+                for (let i = 0; i < result.generated_text.length; i++) {
+                    setTimeout(function () {
+                        animatedText.innerHTML += result.generated_text[i];
+                    }, 50 * i);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                animatedText.innerHTML = "Error occurred";
             }
         }
     </script>

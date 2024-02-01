@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import torch
 from lib.lstm import LSTMLanguageModel
-import math
 
 app = Flask(__name__)
 
@@ -10,13 +9,24 @@ def index():
     generated_text = ""
 
     if request.method == 'POST':
-        # Get the user input from the form
-        user_input = request.form.get('query', '')
+        try:
+            data = request.get_json()
 
-        # Process the user input (you can replace this with your own logic)
-        generated_text = process_user_input(user_input)
+            print(data)
 
-    return render_template('index.html', generated_text=generated_text)
+            if data and 'prompt' in data:
+                user_input = data['prompt']
+                generated_text = process_user_input(user_input)
+
+                return jsonify({'generated_text': generated_text})
+
+            else:
+                return jsonify({'error': 'Invalid JSON data'})
+
+        except Exception as e:
+            return jsonify({'error': str(e)})
+
+    return render_template('index.html')
 
 def process_user_input(user_input):
     max_seq_len = 30
@@ -26,14 +36,14 @@ def process_user_input(user_input):
     vocab = torch.load('models/vocab.pt')
     tokenizer = torch.load('models/tokenizer.pt')
     vocab_size = len(vocab)
-    emb_dim = 1024                # 400 in the paper
-    hid_dim = 1024                # 1150 in the paper
-    num_layers = 2                # 3 in the paper
+    emb_dim = 1024               
+    hid_dim = 1024                
+    num_layers = 2 
     dropout_rate = 0.65              
     lr = 1e-3
 
     model = LSTMLanguageModel(vocab_size, emb_dim, hid_dim, num_layers, dropout_rate).to(device)
-    model.load_state_dict(torch.load('models/best-val-lstm_lm.pt',  map_location=device))
+    model.load_state_dict(torch.load('models/harrypotter.pt',  map_location=device))
 
     generation = generate(user_input, max_seq_len, temperature, model, tokenizer, 
                           vocab, device, seed)
@@ -52,19 +62,16 @@ def generate(prompt, max_seq_len, temperature, model, tokenizer, vocab, device, 
             src = torch.LongTensor([indices]).to(device)
             prediction, hidden = model(src, hidden)
             
-            #prediction: [batch size, seq len, vocab size]
-            #prediction[:, -1]: [batch size, vocab size] #probability of last vocab
-            
             probs = torch.softmax(prediction[:, -1] / temperature, dim=-1)  
             prediction = torch.multinomial(probs, num_samples=1).item()    
             
-            while prediction == vocab['<unk>']: #if it is unk, we sample again
+            while prediction == vocab['<unk>']:
                 prediction = torch.multinomial(probs, num_samples=1).item()
 
-            if prediction == vocab['<eos>']:    #if it is eos, we stop
+            if prediction == vocab['<eos>']:
                 break
 
-            indices.append(prediction) #autoregressive, thus output becomes input
+            indices.append(prediction) 
 
     itos = vocab.get_itos()
     tokens = [itos[i] for i in indices]
