@@ -16,20 +16,20 @@ from the model trained on thousands on data related to Harry Potter.
 ### Repo Strcuture
 <pre>
 root
-|--<a>harrypotter.json (dataset)</a>
-|--<a>LSTM_LM.ipyng</a>
-|--<a>app</a>
-    |--<a>lib</a>
-    |--<a>models</a>
-    |   |--<a>harrpotter.pt</a>
+|--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/harrypotter.json">harrypotter.json (dataset)</a>
+|--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/LSTM_LM.ipyng">LSTM_LM.ipyng</a>
+|--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app">app</a>
+    |--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app/lib">lib</a>
+    |--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app/models">models</a>
+    |   |--<a>harrpotter.pt (removed due to file size)</a>
     |   |--<a>tokenizer.pt</a>
     |   |--<a>vocab.pt</a>
     |
-    |--<a>static</a>
+    |--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app/static">static</a>
     |--<a>templates</a>
-    |   |--<a>index.html</a>
+    |   |--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app/templates/index.html">index.html</a>
     |
-    |--<a>app.py</a>
+    |--<a href="https://github.com/scherbatsky-jr/nlp-text-generator/blob/main/app/app.py">app.py</a>
 </pre>
 
 
