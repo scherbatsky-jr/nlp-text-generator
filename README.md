@@ -38,7 +38,7 @@ root
 I have compiled the text rich dataset related to Harry Potter from the wiki fandom (https://harrypotter.fandom.com/wiki/Main_Page) site. To extract all the text from the site, I have used two open source tools from github to scrape the text data:
 
 - ScrapeFandom (https://github.com/JOHW85/ScrapeFandom) : To downland and dump all the pages related to harry potter in the wiki fandom site into XML files
-- WikiTextExtractor (https://github.com/JOHW85/wikiextractor) : To extract text from the dumpted XML file and export it into json file
+- WikiTextExtractor (https://github.com/JOHW85/wikiextractor) : To extract text from the dumped XML file and export it into json file
 
 A custom python script was used to clean up the json from any metadata, and breakdown the paragraphs into sentencnes and formatted necessary to load the data from datasets library. The final result is saved at file `harrypotter.json`. The json file simply contains the list of the extracted sentences.
 
@@ -57,5 +57,6 @@ Run the app.py file to start the server
 The flask server will start at `http://localhost:5000`
 
 ### Demo
+![External GIF](media/demo.gif)
 
 
